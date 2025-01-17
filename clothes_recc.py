@@ -3,33 +3,29 @@
 ### Work in Progress ###
 import requests
 
-def fetchForecast(lat, lon, apikey):
-    url = "https://api.tomorrow.io/v4/weather/realtime?location=42.3478,-71.0466&apikey=zcnw8nghwYPKVCSkZ32ewexg5LOjZ1gr"
-    querystring = {"values":"humidity"}
-    return requests.get(url, params=querystring)
-    # return response.json() 
-
-def consumeOne(forecast):
-    return {
-    "temp": forecast["temp"]["value"],
-    "feel": forecast["feels_like"]["value"],
-    "precipitation": forecast["precipitation"]["value"],
-    "precipitation_type": forecast["precipitation_type"]["value"],
-    "weather_code": forecast["weather_code"]["value"],
-    }
-
-print(fetchForecast(144.9631,37.8136,"zcnw8nghwYPKVCSkZ32ewexg5LOjZ1gr"))
-
-
-import requests
-
-url = "https://api.tomorrow.io/v4/weather/realtime?location=toronto&apikey=zcnw8nghwYPKVCSkZ32ewexg5LOjZ1gr"
+url = "https://api.tomorrow.io/v4/weather/forecast?location=melbourne&timesteps=1h&units=metric&apikey=zcnw8nghwYPKVCSkZ32ewexg5LOjZ1gr"
 
 headers = {
     "accept": "application/json",
     "accept-encoding": "deflate, gzip, br"
-}
+    }
 
 response = requests.get(url, headers=headers)
+res_json = response.json()
 
-# print(response.text)
+# Extract hourly forecast data
+hourly_data = res_json["timelines"]["hourly"]
+
+# Print hourly temperature for next 10 hours
+for i in range(10):
+    print(hourly_data[i]["values"]["temperature"])
+
+# Check precipitationProbability to determine weather umbrella is required
+# if 0<PP<30 - might need an umbrella today
+# if PP>=30 - definitely will require an umbrella today!
+# TODO
+
+# Check uvIndex to determine if sunscreen and a hat is required
+# if UV> 3 --> sunscreen required
+# if UV > 7 --> bring a hat
+# TODO
